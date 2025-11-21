@@ -1,0 +1,166 @@
+.header {
+  border-bottom: 1px solid gray;
+  padding: 0.5em 2em;
+}
+
+.user-logo {
+  display: block;
+  cursor: pointer;
+  width: 4%;
+  height: auto;
+  margin-left: auto;
+}
+
+.user-menu {
+  display: grid;
+  justify-self: right;
+  position: absolute;
+  background-color: #111010;
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.user-logo-active {
+  border: 1px solid gray;
+  border-radius: 4px;
+  background-color: #111010;
+}
+
+.hover-bar:hover {
+  cursor: pointer;
+  font-weight: bold;
+  color: rgb(181, 195, 183);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.modal {
+    background-color: #242424;
+    padding: 0.5em 1em;
+    border-radius: 0.25rem
+}
+
+.modal > svg {
+    position: relative;
+    left: 95%;
+}
+
+.modal > svg:hover {
+    color: gray;
+    cursor: pointer;
+}
+
+.nav-bar {
+  display: flex;
+  margin-top: 2em;
+}
+
+.nav-bar > span {
+  padding: 1em;
+  border: 1px solid gray;
+  border-bottom: none;
+  background-color: rgb(41, 40, 40);
+  font-size: large;
+  cursor: pointer;
+}
+
+.active-nav-tab {
+  background-color: rgb(23, 22, 22);
+  font-size: large;
+  cursor: auto;
+  transform: scale(0.75);
+} 
+
+.question {
+  display: grid;
+  padding-block: 0.5rem;
+}
+
+.question-list {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.question-op {
+  display: grid;
+}
+
+.question-op > button {
+  max-height: 3em;
+}
+
+.question .title {
+  font-weight: bold;
+}
+
+.question > .info {
+  display: flex;
+  gap: 0 0.5rem;
+  padding: 0.5rem;
+}
+
+.question > .info > span {
+  border: 1px solid white;
+  padding: 0.125em;
+  font-size: small;
+  border-radius: 3px;
+  background-color: rgb(70, 68, 68);
+}
+
+.question > .answer {
+  display: grid;
+  gap: 0.25em;
+}
+
+.question > .answer > .image {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  margin-top: 1rem;
+}
+
+.question > .answer > input {
+  padding: 0.25rem;
+}
+
+.answer-image > div > img {
+  display: block;
+}
+
+.answer > .choice {
+  display: flex;
+  gap: 0.25em;
+  padding-left: 1em;
+}
+
+.answer > .text {
+  padding: 0.5rem 0.25rem;
+  margin-left: 0.5em;
+  margin-top: 1rem;
+}
+
+.exam-info {
+  text-align: center;
+  border-bottom: 1px solid gray;
+  padding-block: 0.5rem;
+}
+
+.exam-update {
+  display: grid;
+  font-weight: bold;
+  grid-auto-flow: column;
+  margin-block: 0.5rem;
+}
