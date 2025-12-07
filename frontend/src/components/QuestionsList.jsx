@@ -39,7 +39,6 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
         method: "DELETE",
       });
       const _data = await response.json();
-      console.log(_data);
       getAllData();
     })();
   }
@@ -55,7 +54,6 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
           body: JSON.stringify(data)
       });
       const _data = await response.json();
-      console.log(_data);
     })();
     getAllData();
   };
@@ -74,7 +72,6 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
     const value = e.target.value;
     const ans_id = ans_list.findIndex(ans => ans["question_id"] === id);
 
-    console.log("...", ans_id, ans_list);
     if(type === "0") {
       ans_list[ans_id]["answer"] = value;
     } else if(type === "-1") {
@@ -92,13 +89,11 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
     } else {
       ans_list[ans_id]["answer"] = `${STATIC_STORAGE_URL}/img/${ans_list[ans_id]["user_id"]}_${ans_list[ans_id]["examination_id"]}_${ans_list[ans_id]["question_id"]}.jpg`;
     }
-    console.log(ans_list);
     setAnswers([...ans_list]);
   }
 
   const handleAnsSubmit = (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(answers));
     (async () => {
       const response = await fetch('http://localhost:8000/answers', {
           method: "POST",
@@ -108,7 +103,6 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
           body: JSON.stringify(answers)
       });
       const _data = await response.json();
-      console.log(_data);
     })();
   }
 
@@ -120,7 +114,6 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
       const obj = {"user_id": user_id, "examination_id": exam_id}
       let answerObjs = [];
       if(ans_state) {
-        console.log(ans_state);
         ans_state.forEach((value, index) => {
           const type = questions[index].type;
           let ans = value;
@@ -150,11 +143,9 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
     }
     let states = [];
     states = ans_state
-    console.log(answers);
     answers.forEach((value, index) => {
       states[index] = value["answer"];
     });
-    console.log(states);
     const stateObj = {"ans_state": states};
     const access = localStorage.getItem('access');
     (async () => {
@@ -167,10 +158,10 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
           body: JSON.stringify(stateObj)
       });
       const _data = await response.json();
-      console.log(_data);
     })();
 
-  }, 5000)
+  }, 10000);
+
   return (
     <>
       <div>
@@ -199,7 +190,7 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
                     <span>Short Answer</span>
                     <span>Score: {value["max_score"]}</span> 
                 </div>
-                <TextSubmit displayMode={true} item={value} id={index} value={!value.hasOwnProperty('correct_answers') ||  Array.isArray(value["correct_answers"]) ? "" : value["correct_answers"]}/>
+                <TextSubmit displayMode={true} item={value} id={index} value={!value.hasOwnProperty('correct_answers') || Array.isArray(value["correct_answers"]) ? "" : value["correct_answers"]}/>
               </div>
               </div>);
             } else if(type === 'image_upload') {
@@ -223,7 +214,7 @@ export default function QuestionsList({ questions, valid, modeProp, exam_id, use
                     <span>Long Answer</span>
                     <span>Score: {value["max_score"]}</span> 
                 </div>
-                <ImageUpload displayMode={true} item={value} id={index} exam_id={exam_id} img_url={!value.hasOwnProperty('correct_answers') || Array.isArray(value["correct_answers"]) ? "" : value["correct_answers"]}/>
+                <ImageUpload displayMode={true} item={value} id={index} exam_id={exam_id}/>
               </div>
               </div>);
             } else if(type === 'single_choice') {

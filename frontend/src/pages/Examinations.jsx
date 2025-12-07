@@ -1,27 +1,24 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserContext } from '../components/AuthProvider.jsx'
-import QuestionsList from '../components/QuestionsList.jsx';
 import ExamTimer from '../components/ExamTimer.jsx';
+import NavComp from '../components/NavComp.jsx';
 import Modal from '../components/Modal.jsx';
 
 export default function Examinations() {
   const [data, setData] = useState(null);
   const [modalVisible, setModalVisible] = useState(null);
-  const { id } = useParams();
-  const { user } = useContext(UserContext);
+  const { id, user_id } = useParams();
 
   const getData = () => {
     const access = localStorage.getItem('access');
     (async () => {
-      const response = await fetch(`http://localhost:8000/exams/${id}`, {
+      const response = await fetch(`http://localhost:8000/exams/${id}${user_id ? "/users/" + user_id : ""}`, {
         headers: {
           "Authorization": `Bearer ${access}`,
           "Content-Type": "application/json"
         }
       });
       const _data = await response.json();
-      console.log(_data);
       if(_data) {
         setData(_data);
       }
@@ -30,10 +27,7 @@ export default function Examinations() {
 
   useEffect(() => {
     getData();
-    if(data && data.hasOwnProperty("exam_state")) {
-      setModalVisible("exam");
-    }
-  }, []);
+  }, [user_id]);
 
   return (<>
     {data && <>
@@ -54,9 +48,10 @@ export default function Examinations() {
           <span>{data.total_marks} Marks</span>
         </div>
       </>}
+      
       {data.hasOwnProperty('expires') && <ExamTimer expires={data.expires} />}
       </div>
-      <QuestionsList questions={data.questions} modeProp={"exam"} exam_id={id} user_id={user.id} ans_state={data.exam_state} />
+      <NavComp exam={data} />
     </>}
   </>);
 }

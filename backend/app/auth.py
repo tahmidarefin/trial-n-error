@@ -71,8 +71,6 @@ async def require_admin(user: UserSchema = Depends(get_current_active_user)):
   if user.admin is not True:
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions")
   return user
-    
-  return role_checker
 
 @router.post("/token", response_model=TokenCreate)
 async def login_for_access_token(form_data = Depends(OAuth2PasswordRequestForm), session: AsyncSession = Depends(get_async_session)):

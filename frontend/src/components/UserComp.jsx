@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { UserContext } from './AuthProvider.jsx';
 import LoginComp from "./LoginComp.jsx"
 import RegisterComp from "./RegisterComp.jsx"
@@ -39,6 +39,7 @@ export default function UserComp() {
     {user ? <>
       <span>{user.full_name}</span> <br />
       <span>{user.email}</span> <br />
+      <span><Link to={'privilege/admin'}>Admin</Link></span> <br />
       <span className="hover-bar" onClick={logOut}>Logout</span></> : <>
         <span className="hover-bar" onClick={() => {setActive(state => !state); setModalVisible("login")}}>Login</span> &nbsp;
         <span className="hover-bar" onClick={() => {setActive(state => !state); setModalVisible("register")}}>Register</span>

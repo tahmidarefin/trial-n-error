@@ -27,9 +27,6 @@ class Question(Base):
 
     ques_exam = relationship("Examination", secondary="answers", back_populates="exam_ques", lazy="selectin")
 
-    # answers = relationship("Answer", secondary="answers", back_populates="question", cascade="all, delete-orphan", lazy="selectin")
-    # examinations_link = relationship("Answer", secondary="answers", back_populates="question_exams", cascade="all, delete-orphan", lazy="selectin")
-
 class Examination(Base):
     __tablename__ = "examinations"
 
@@ -40,9 +37,6 @@ class Examination(Base):
 
     exam_user = relationship("User", secondary="answers", back_populates="user_exam", lazy="selectin")
     exam_ques = relationship("Question", secondary="answers", back_populates="ques_exam", lazy="selectin")
-
-    # questions_link = relationship("Question", secondary="answers", back_populates="exam_questions", lazy="selectin")
-    # users_link = relationship("Answer", secondary="answers", back_populates="exam_users", lazy="selectin")
 
 class ExamState(Base):
     __tablename__ = "exam_state"
@@ -64,8 +58,6 @@ class User(Base):
 
     user_exam = relationship("Examination", secondary="answers", back_populates="exam_user", lazy="selectin")
 
-    # answers = relationship("Answer", secondary="answers", back_populates="user", cascade="all, delete-orphan", lazy="selectin")
-    # examinations_link = relationship("Answer", secondary="answers", back_populates="user_exams", lazy="selectin")
     
 # It is the association table, that's where relational magic happens like charm (many-to-many)
 # It sucks earlier, as not know uses of secondary table
@@ -78,14 +70,7 @@ class Answer(Base):
 
     answer = Column(String, nullable=True)
     marks = Column(Integer, default=0)
-    # question = relationship("Question", back_populates="answers")
-    # user = relationship("User", back_populates="answers")
 
-    # exam_questions = relationship("Examination", back_populates="questions_link")
-    # question_exams = relationship("Question", back_populates="examinations_link")
-    # user_exams = relationship("User", back_populates="examinations_link")
-    # exam_users = relationship("Examination", back_populates="users_link")
-    
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,  # False in production

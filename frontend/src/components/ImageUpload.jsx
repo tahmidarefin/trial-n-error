@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from './AuthProvider.jsx';
 
-export default function ImageUpload({displayMode, item, id, exam_id, img_url}) {
+export default function ImageUpload({item, id, exam_id}) {
     const [img, setImg] = useState(null);
     const [data, setData] = useState(null);
     const [file, setFile] = useState(null);
@@ -27,12 +27,14 @@ export default function ImageUpload({displayMode, item, id, exam_id, img_url}) {
                 body: _data
             });
             const data = await response.json();
-            console.log(data);
         })();
     }
 
     useEffect(() => {
         setData(item);
+        if(item.hasOwnProperty('correct_answers') && !Array.isArray(item['correct_answers'])) {
+            setFile(item['correct_answers']);
+        }
     }, []);
 
     return (
@@ -44,7 +46,7 @@ export default function ImageUpload({displayMode, item, id, exam_id, img_url}) {
                     <button onClick={handleUpload} type="button">Upload</button>
                 </div>
                 <div>
-                    { (file || img_url) && <img src={img_url ? img_url : file} alt="preview" width="200" />}
+                    { file && <img src={file} alt="preview" width="200" />}
                 </div>
             </div> }
         </>

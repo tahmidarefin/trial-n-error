@@ -12,7 +12,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 import aiofiles
-from app.auth import router as auth_router, require_admin, get_current_active_user
+from app.auth import router as auth_router, require_admin, get_current_active_user, get_current_user
 
 
 @asynccontextmanager
@@ -122,7 +122,7 @@ async def create_exam(exam: ExamCreate, session: AsyncSession = Depends(get_asyn
     return {"message": "Examination created successfully."}
 
 @app.get('/exams/{exam_id}')
-async def get_exams(exam_id: str, current_user: UserCreate = Depends(get_current_active_user), session: AsyncSession = Depends(get_async_session)): 
+async def get_exam(exam_id: str, current_user: UserCreate = Depends(get_current_active_user), session: AsyncSession = Depends(get_async_session)): 
     exam_id = uuid.UUID(exam_id)
     user_id = current_user.id
 
@@ -162,18 +162,6 @@ async def get_exams(exam_id: str, current_user: UserCreate = Depends(get_current
     if current_user.admin:
         exam_dict = {"id": exam_id, "title": exam.title, "duration": exam.duration, "questions": ques_list, "total_questions": len(exam.exam_ques), "total_marks": total_marks}
         return exam_dict
-    # elif exam_state and exam_state.expires <= datetime.now():
-    #     answers = []
-    #     answer = {"user_id": user_id, "examination_id": exam_id}
-    #     for state, ques in zip(exam_state.ans_state, exam.exam_ques):
-    #         answer["question_id"] = ques.id
-    #         answer["answer"] = state
-    #         answer["marks"] = ques.max_score if (ques.type == "single_choice" or ques.type == "multi_choice") and ", ".join(ques.correct_answers) == state else 0
-    #         answers.append(AnswerCreate.model_validate(answer))
-    #     await create_answer(answers, session)
-    #     await session.delete(exam_state)
-    #     await session.commit()
-    #     return await retrieve_result(exam_id, user_id, ques_list)
     elif user_id in [user.id for user in exam.exam_user]:
         return await retrieve_result(exam_id, user_id, ques_list)
             
@@ -216,13 +204,36 @@ async def update_exam_state(exam_id: str, exam_state: dict, current_user: UserCr
     
     return state
 
+@app.put('/exams/{exam_id}')
+async def update_exam_privacy(exam_id: str, current_user: UserCreate = Depends(require_admin), session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(select(Examination).where(Examination.id == exam_id))
+    exam = result.scalars().first()
+    exam.published = not exam.published
+    await session.commit()
+    await session.refresh(exam)
+    
+    return {"detail": "Examination privacy updated successfully."}
+
 @app.get('/exams/{exam_id}/users')
 async def get_exams_user(exam_id: str, current_user: UserCreate = Depends(require_admin), session: AsyncSession = Depends(get_async_session)): 
     id = uuid.UUID(exam_id)
     result = await session.execute(select(Examination).where(Examination.id == id))
     exam = result.scalars().first()
+    users = []
 
-    return exam.exam_user
+    for user in exam.exam_user:
+        if not user.admin:
+            users.append({"id": user.id, "full_name": user.full_name})
+
+    return users
+
+@app.get('/exams/{exam_id}/users/{user_id}')
+async def get_exam_user(exam_id: str, user_id: str, current_user: UserCreate = Depends(require_admin), session: AsyncSession = Depends(get_async_session)): 
+    id = uuid.UUID(user_id)
+    result = await session.execute(select(User).where(User.id == id))
+    user = result.scalars().first()
+        
+    return await get_exam(exam_id, user, session)
 
 @app.get('/exams')
 async def get_exams(current_user: UserSchema = Depends(get_current_active_user), session: AsyncSession = Depends(get_async_session)):
@@ -249,7 +260,10 @@ async def get_exams(current_user: UserSchema = Depends(get_current_active_user),
 
     
     result = await session.execute(select(Examination))
-    exams = [{"id": row[0].id, "title": row[0].title, "duration": row[0].duration} for row in result.all()]
+    if not current_user.admin:
+        exams = [{"id": row[0].id, "title": row[0].title, "duration": row[0].duration} for row in result.all() if row[0].published]
+    else:
+        exams = [{"id": row[0].id, "title": row[0].title, "duration": row[0].duration, "published": row[0].published} for row in result.all()]
     
     return exams
 
@@ -286,10 +300,9 @@ async def register_user(userdata: UserCreate, session: AsyncSession = Depends(ge
     except SQLAlchemyError as e:
         return {"detail": "Unexpected Error! Try again with Unique email."}
 
-@app.get('/users/{user_id}/activate')
-async def activate_user(user_id: str, session: AsyncSession = Depends(get_async_session)):
-    id = uuid.UUID(user_id)
-    result = await session.execute(select(User).where(User.id == id))
+@app.put('/user/activate')
+async def activate_user(current_user: UserSchema = Depends(get_current_user), session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(select(User).where(User.id == current_user.id))
     user = result.scalars().first()
     setattr(user, "disabled", False)
     await session.commit()
@@ -297,10 +310,9 @@ async def activate_user(user_id: str, session: AsyncSession = Depends(get_async_
     delattr(user, 'hashed_password')
     return user
 
-@app.get('/users/{user_id}/activate/admin')
-async def make_admin(user_id: str, session: AsyncSession = Depends(get_async_session)):
-    id = uuid.UUID(user_id)
-    result = await session.execute(select(User).where(User.id == id))
+@app.put('/activate/admin')
+async def make_admin(current_user: UserSchema = Depends(get_current_active_user), session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(select(User).where(User.id == current_user.id))
     user = result.scalars().first()
     setattr(user, "admin", True)
     await session.commit()

@@ -35,7 +35,18 @@ export default function LoginComp() {
   };
 
   const activateUser = () => {
-    
+    const access = localStorage.getItem('access');
+    (async () => {
+      const response = await fetch(`http://localhost:8000/user/activate`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+          },
+      });
+      const _data = await response.json();
+      console.log(_data);
+    })();
   }
 
   const handleLogin = (e) => {
@@ -52,8 +63,8 @@ export default function LoginComp() {
           <button>Login</button>
       </form>
       {/* <p onClick={() => callbackVisible("reset")}>Forgot your password? <b>Reset</b></p> */}
-      <span>{message}</span>
-      {message === "Inactive User" && <span onClick={activateUser}>Activate Account</span>}
+      <span>{message}</span><br/>
+      {message === "Inactive User" && <span className={"activate-user"} onClick={activateUser}>Activate Account</span>}
       <p>New here? <b onClick={() => callbackVisible("register")}>Register</b></p>
     </div>
     </>);

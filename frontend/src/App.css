@@ -1,6 +1,16 @@
 .header {
   border-bottom: 1px solid gray;
   padding: 0.5em 2em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.public-icon {
+  display: block;
+  cursor: pointer;
+  width: 2%;
+  height: auto;
+  margin-left: auto;
 }
 
 .user-logo {
@@ -13,8 +23,9 @@
 
 .user-menu {
   display: grid;
-  justify-self: right;
   position: absolute;
+  top: 3em;
+  right: 5%;
   background-color: #111010;
   border-radius: 5px;
   padding: 1rem;
@@ -64,7 +75,7 @@
 
 .nav-bar {
   display: flex;
-  margin-top: 2em;
+  margin-block: 2em;
 }
 
 .nav-bar > span {
@@ -163,4 +174,42 @@
   font-weight: bold;
   grid-auto-flow: column;
   margin-block: 0.5rem;
+}
+
+.hero {
+   margin-top: 3em;
+   padding-inline: 2.5%;
+}
+
+.hero > * {
+  margin-top: 0.5em;
+}
+
+.hero > button {
+  margin-top: 2em;
+}
+
+.footer {
+  margin-top: 1em;
+  position: absoulte;
+  bottom: 0;
+}
+
+.footer > .info {
+  display: flex;
+  gap: 3rem;
+  font-size: large;
+  align-items: center;
+}
+
+.footer > .copy {
+  text-align: center;
+  font-size: medium;
+  margin-top: 0.5rem;
+}
+
+.activate-user {
+  color: rgb(25, 163, 25);
+  cursor: pointer;
+  font-weight: bold;
 }

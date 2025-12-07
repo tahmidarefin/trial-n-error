@@ -1,8 +1,4 @@
-import { useState, useEffect } from 'react'
-import SingleChoice from './SingleChoice.jsx'
-import MultiChoice from './MultiChoice.jsx'
-import TextSubmit from './TextSubmit.jsx'
-import ImageUpload from './ImageUpload.jsx'
+import { useState } from 'react'
 import QuestionsList from './QuestionsList.jsx'
 
 export default function ImportPreview() {
@@ -72,34 +68,6 @@ export default function ImportPreview() {
       });
       const _data = await response.json();
     })();
-    // const formdata = new FormData(e.target);
-    // const _formdata = Object.fromEntries(formdata.entries());
-    // let ans = {}, answer = {};
-    // for(const [_key, _value] of Object.entries(_formdata)) {
-    //   const [id, type] = _key.split(" ");
-    //   if(!answer[id]) {
-    //     ans = {};
-    //   }
-    //   if(type === "0") {
-    //     ans["type"] = "single_choice";
-    //     ans["choice"] = [];
-    //     ans["choice"].push(_value);
-    //   } else if(type === "-1") {
-    //     ans["type"] = "text";
-    //     ans['text'] = _value;
-    //   } else if(type >= "1" && type <= "4") {
-    //     ans["type"] = "multi_choice";
-    //     if(!answer[id]) {
-    //       ans['choice'] = [];
-    //     }
-    //     ans["choice"].push(_value);
-    //   } else {
-    //     ans["type"] = "image";
-    //     ans["image_url"] = "url_url";
-    //   }
-    //   answer[id] = ans;
-    // }
-    // console.log(answer);
   }
 
   return (

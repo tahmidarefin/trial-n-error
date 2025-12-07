@@ -56,6 +56,10 @@ npm run build && npm run preview
 
 The frontend will be available at `http://localhost:5173` and the backend will be available at `http://localhost:8000`.
 
+6. **Access Demo Files for Preview Features**
+
+Navgiate to `trial-n-error/frontend/public` and use these file for testing ui and fetures.
+
 ## Running tests
 
 ## Deployment
